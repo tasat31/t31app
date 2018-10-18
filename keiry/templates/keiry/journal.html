@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static keiry_extra%}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3">
+<div class="row">
+  <div class="col-12">
+  <h2>仕訳帳</h2>
+  {% for journal_form in journal_formset %}
+    {% if forloop.first %}
+      <table class="table table-bordered table-hover table-responsive">
+        <thead></thead>
+         <tr>
+           <th>{{ journal_form.rec_date.label }}</th>
+           <th>{{ journal_form.seq.label }}</th>
+           <th>{{ journal_form.debit_item_id.label }}</th>
+           <th>{{ journal_form.credit_item_id.label }}</th>
+           <th>{{ journal_form.amount_inc_tax.label }}</th>
+           <th>{{ journal_form.remark.label }}</th>
+           {% comment "Not desplayed, see details" %}
+            <th>{{ journal_form.tax_type.label }}</th>
+            <th>{{ journal_form.gc_item_id.label }}</th>
+            <th>{{ journal_form.description.label }}</th>
+            <th>{{ journal_form.cash_io.label }}</th>
+            <th>{{ journal_form.debt_no.label }}</th>
+            <th>{{ journal_form.credit_no.label }}</th>
+            <th>{{ journal_form.order_no.label }}</th>
+            <th>{{ journal_form.seg_id.label }}</th>
+           {% endcomment %}
+           <th>{{ journal_form.closed_date.label }}</th>
+           <th>詳細確認</th>
+         </tr>
+        <tbody>
+    {% endif %}
+
+         <tr>
+           <td>{{ journal_form.rec_date.value|date:"Y/m/d" }}</td>
+           <td>{{ journal_form.seq.value }}</td>
+           <td>{{ journal_form.debit_item_id|addcss:"form-control-sm" }}</td>
+           <td>{{ journal_form.credit_item_id|addcss:"form-control-sm" }}</td>
+           <td>{{ journal_form.amount_inc_tax.value }}</td>
+           <td>{{ journal_form.remark.value }}</td>
+           {% comment "Not desplayed, see details" %}
+            <td>{{ journal_form.tax_type|addcss:"form-control-sm" }}</td>
+            <td>{{ journal_form.gc_item_id|addcss:"form-control-sm" }}</td>
+            <td>{{ journal_form.description.value }}</td>
+            <td>{{ journal_form.cash_io.value }}</td>
+            <td>{{ journal_form.debt_no.value }}</td>
+            <td>{{ journal_form.credit_no.value }}</td>
+            <td>{{ journal_form.order_no.value }}</td>
+            <td>{{ journal_form.seg_id|addcss:"form-control-sm" }}</td>
+           {% endcomment %}
+           <td>{{ journal_form.closed_date.value }}</td>
+           <td><a class="btn btn-primary" href="{% url 'journal_detail' journal_form.rec_date.value|date:"Ymd" journal_form.seq.value %}" role="button">詳細確認</a></td>
+         </tr>
+
+    {% if forloop.last %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% empty %}
+      <p>仕訳帳データがありません。</p>
+  {% endfor %}
+  </div>
+</div>
+</div>
+</main>
+
+{% endblock %}

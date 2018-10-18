@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <h2 class="h2"><button class="btn btn-primary"><span id="cash_or_profit">収支実績および計画表<span data-feather="toggle-left"></span></button></h2>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                This Quater
+              </button>
+              <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary"><span data-feather="chevrons-left"></span>Add last quater</button>
+                <button class="btn btn-sm btn-outline-secondary"><span data-feather="chevron-left"></span>Add last month</button>
+                <button class="btn btn-sm btn-outline-secondary">Add next month<span data-feather="chevron-right"></span></button>
+                <button class="btn btn-sm btn-outline-secondary">Add next quater<span data-feather="chevrons-right"></span></button>
+              </div>
+            </div>
+          </div>
+
+          <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+          <h2>Section title</h2>
+            
+           <div class="btn-group mr-2">
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/7</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/8</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/9</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/10</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/11</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2018/12</button>
+             <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><span data-feather="list"></span>&nbsp2019/1</button>
+           </div>
+            
+           <div id="collapseExample" class="collapse show" >
+             <div class="table-responsive">
+               <table class="table table-striped table-sm">
+               <thead>
+                <tr>
+                  <th>#</th>
+                  <th>出納区分</th>
+                  <th>日付</th>
+                  <th>摘要</th>
+                  <th>金額</th>
+                  <th>予実</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>売上/入金</td>
+                  <td>2018/07/05</td>
+                  <td>6月売上の入金</td>
+                  <td>100,000</td>
+                  <td>実</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>仕入/支払</td>
+                  <td>2018/07/10</td>
+                  <td>購入部品代</td>
+                  <td>-100,000</td>
+                  <td>実</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>経費/支払</td>
+                  <td>2018/07/20</td>
+                  <td>通信費</td>
+                  <td>-5,000</td>
+                  <td>予</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><b>2017/07 計</b></td>
+                  <td></td>
+                  <td></td>
+                  <td><b>-5,000</b></td>
+                  <td><b>予含む</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+         </div>
+
+        </main>
+      </div>
+    </div>
+
+    <!-- Graphs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script>
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["2018/07", "2018/08", "2018/09", "2018/10", "2018/11", "2018/12", "2019/01"],
+          datasets: [{
+            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+            lineTension: 0,
+            backgroundColor: 'transparent',
+            borderColor: '#007bff',
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          },
+          {
+            data: [5339, 11345, 8483, 14003, 13489, 14092, 2034],
+            lineTension: 0,
+            backgroundColor: 'transparent',
+            borderColor: '#007baa',
+            borderWidth: 2,
+            pointBackgroundColor: '#007baa'
+          },
+          ]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: false
+              }
+            }]
+          },
+          legend: {
+            display: false,
+          }
+        }
+      });
+    </script>
+
+{% endblock %}

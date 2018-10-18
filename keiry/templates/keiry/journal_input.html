@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% load static keiry_extra%}
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3">
+
+<form action="{% url 'journal_input' %}" method="post">
+{% csrf_token %}
+{{ journal_form.seq }}
+{{ journal_form.tax }}
+
+<div class="row">
+  <div class="col">
+  <h2>仕訳入力</h2>
+  </div>
+</div>
+<div class="row">
+ <div class="col-12">
+  <table>
+      <tr>
+        <td>{{ journal_form.rec_date.errors }}</td>
+        <td>{{ journal_form.seq.errors }}</td>
+        <td>{{ journal_form.debit_item_id.errors }}</td>
+        <td>{{ journal_form.credit_item_id.errors }}</td>
+        <td>{{ journal_form.amount_inc_tax.errors}}</td>
+        <td>{{ journal_form.remark.errors}}</td>
+        <td>{{ journal_form.tax_type.errors}}</td>
+      </tr>
+  <table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>{{ journal_form.rec_date.label }}</th>
+        <th>{{ journal_form.seq.label }}</th>
+        <th>{{ journal_form.debit_item_id.label }}</th>
+        <th>{{ journal_form.credit_item_id.label }}</th>
+        <th>{{ journal_form.amount_inc_tax.label }}</th>
+        <th>{{ journal_form.remark.label }}</th>
+        <th>{{ journal_form.tax_type.label }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+       {% if journal_form.seq.value is None %}
+        <td>{{ journal_form.rec_date|addcss:"form-control" }}</td>
+        <td>-</td>
+       {% else %}
+        <td>{{ journal_form.rec_date.value|date:'Y/m/d' }}</td>
+        <td>({{ journal_form.seq.value }})</td>
+       {% endif %}
+        <td>{{ journal_form.debit_item_id|addcss:"form-control" }}</td>
+        <td>{{ journal_form.credit_item_id|addcss:"form-control" }}</td>
+        <td>{{ journal_form.amount_inc_tax|addcss:"form-control"}}</td>
+        <td>{{ journal_form.remark|addcss:"form-control" }}</td>
+        <td>{{ journal_form.tax_type|addcss:"form-control"}}</td>
+      </tr>
+    </tbody>
+  </table>
+ </div>
+</div>
+
+<div class="row">
+  <div class="col-6">
+    <p>管理用補助項目</p>
+    <table>
+     <tr><td>{{ journal_form.seg_id.label }}</td><td>{{ journal_form.seg_id|addcss:"form-control" }}</td></tr>
+     <tr><td>{{ journal_form.gc_item_id.label }}</td><td>{{ journal_form.gc_item_id|addcss:"form-control"}}</td></tr>
+     <tr><td>{{ journal_form.cash_io.label }}</td><td>{{ journal_form.cash_io|addcss:"form-control" }}</td></tr>
+     <tr><td>{{ journal_form.debt_no.label }}</td><td>{{ journal_form.debt_no|addcss:"form-control" }}</td></tr>
+     <tr><td>{{ journal_form.credit_no.label }}</td><td>{{ journal_form.credit_no|addcss:"form-control" }}</td></tr>
+     <tr><td>{{ journal_form.order_no.label }}</td><td>{{ journal_form.order_no|addcss:"form-control"}}</td></tr>
+     <tr><td>{{ journal_form.closed_date.label }}</td>
+         {% if journal_form.closed_date.value is None %}
+           <td>未設定</td>
+         {% else %}
+           <td>{{ journal_form.closed_date.value }}</td>
+         {% endif %}
+     </tr>
+    </table>
+  </div>
+  <div class="col-6">
+    <p>{{ journal_form.description.label }}</p>
+    <p>{{ journal_form.description|addcss:"form-control" }}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 text-center">
+  <input class="btn btn-primary btn-lg" type="submit" value="登録" onclick="updateCheck (); "/>
+  {% if journal_form.seq.value is not None %}
+  &nbsp<input type="submit" class="btn btn-danger btn-lg" id="btn-delete" name="delete" value="削除" onclick="deleteCheck (); " /></p>
+  {% endif %}
+  </div>
+</div>
+</form>
+
+</div>
+</main>
+{% endblock %}

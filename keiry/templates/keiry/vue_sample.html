@@ -1,0 +1,25 @@
+{% load render_bundle from webpack_loader %}
+
+<html>
+  <head>
+    <!-- 開発バージョン、便利なコンソールの警告が含まれています -->
+    <!-- ここをWebpackで展開する方法もあると推測される          -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- 本番バージョン、サイズと速度のために最適化されています -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+    {% render_bundle 'main' 'css' %}
+
+  </head>
+  <body>
+
+    <div id="app">
+      {% verbatim %}
+        {{ message }}
+      {% endverbatim %}
+    </div>
+
+    {% render_bundle 'main' 'js' %}
+  </body>
+</head>

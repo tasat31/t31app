@@ -1,0 +1,242 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="utf-8">
+ <title>Vue-js | Django | Crud App</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="A simple crud app made with the vue js and django">
+ <meta name="keywords" content="vuejs, django, crudapp, restapi">
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+ <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<!-- this.$http.get 等を動かす場合に必要 vue-resourceは廃止 -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script> -->
+<!-- axiosに変更 -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<!-- 開発バージョン、便利なコンソールの警告が含まれています -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+
+</head>
+
+<body>
+  <div id="starting">
+    <div class="container">
+      <div class="row">
+        <h1>{% trans "List of Articles" %}
+        <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addArticleModal">{% trans "Add Article" %}</button>
+        </h1>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Heading</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="article in articles">
+              <th scope="row">${article.id}</th>
+              <td>${article.heading}</td>
+              <td>
+                <button class="btn btn-info" v-on:click="getArticle(article.id)">{% trans "Edit" %}</button>
+                <button class="btn btn-danger" v-on:click="deleteArticle(article.id)">{% trans "Delete" %}</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">{% trans "Loading&#8230;" %}</div>
+  </div>
+
+<!-- Add Article Modal -->
+  <div class="modal fade" id="addArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">{% trans "ADD ARTICLE" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form v-on:submit.prevent="addArticle()">
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="article_heading">{% trans "Article Heading" %}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="article_heading"
+                placeholder="Enter Article Heading"
+                v-model="newArticle.heading"
+                required="required" >
+            </div>
+            <div class="form-group">
+              <label for="article_body">{% trans "Article Body" %}</label>
+              <textarea
+                class="form-control"
+                id="article_body"
+                placeholder="Enter Article Body"
+                v-model="newArticle.body"
+                required="required"
+                rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+          <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
+        </div>
+        </form>
+      </div>
+    </div>
+   <div class="loading" v-if="loading===true">{% trans "Loading&#8230;" %}</div>
+  </div>
+<!-- End of article modal -->
+
+<!-- Edit Article Modal -->
+  <div class="modal fade" id="editArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">{% trans "EDIT ARTICLE" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form v-on:submit.prevent="updateArticle()">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="article_heading">{% trans "Article Heading" %}</label>
+             <input
+                type="text"
+                class="form-control"
+                id="article_heading"
+                placeholder="Enter Article Heading"
+                v-model="currentArticle.heading"
+                required="required" >
+            </div>
+            <div class="form-group">
+              <label for="article_body">{% trans "Article Body"  %}</label>
+              <textarea
+                class="form-control"
+                id="article_body"
+                placeholder="Enter Article Body"
+                v-model="currentArticle.body"
+                required="required"
+                rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">{% trans "Close" %}</button>
+            <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">{% trans "Loading&#8230;" %}</div>
+  </div>
+<!-- End of edit article modal -->
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+  new Vue({
+    el: '#starting',
+    delimiters: ['${','}'],
+    data: {
+      articles: [],
+      loading: false,
+      currentArticle: {},
+      message: null,
+      newArticle: { 'heading': null, 'body': null },
+    },
+    mounted: function() {
+      this.getArticles();
+    },
+    methods: {
+      // テストOK
+      getArticles: function() {
+        this.loading = true;
+        // this.$http.get('/api/article/')
+        axios.get('/api/article/')
+        .then((response) => {
+           this.articles = response.data;
+           this.loading = false;
+        })
+        .catch((err) => {
+           this.loading = false;
+           console.log(err);
+        })
+      },
+      // テストOK, FORMに反映されない
+      getArticle: function(id) {
+        this.loading = true;
+        //this.$http.get(`/api/article/${id}/`)
+        axios.get(`/api/article/${id}/`)
+        .then((response) => {
+           this.currentArticle = response.data;
+           $("#editArticleModal").modal('show');
+           this.loading = false;
+        })
+        .catch((err) => {
+           this.loading = false;
+           console.log(err);
+        })
+      },
+      // テストNG, 原因調査
+      addArticle: function() {
+        this.loading = true;
+        // this.$http.post('/api/article/', this.newArticle)
+        axios.post('/api/article/', this.newArticle)
+        .then((response) => {
+           this.loading = false;
+           this.getArticles();
+        })
+        .catch((err) => {
+           this.loading = false;
+           console.log(err);
+        })
+      },
+      // テストNG, 原因調査
+      updateArticle: function() {
+        this.loading = true;
+        // this.$http.put(`/api/article/${this.currentArticle.id}/`, this.currentArticle)
+        axios.put(`/api/article/${this.currentArticle.id}/`, this.currentArticle)
+        .then((response) => {
+           this.loading = false;
+           this.currentArticle = response.data;
+           this.getArticles();
+        })
+        .catch((err) => {
+           this.loading = false;
+           console.log(err);
+        })
+      },
+      // テストOK
+      deleteArticle: function(id) {
+        this.loading = true;
+        // this.$http.delete(`/api/article/${id}/`)
+        axios.delete(`/api/article/${id}/`)
+        .then((response) => {
+           this.loading = false;
+           this.getArticles();
+        })
+        .catch((err) => {
+           this.loading = false;
+           console.log(err);
+        })
+      }
+  }});
+
+</script>
+
+</body>
+</html>
